@@ -1,0 +1,65 @@
+package com.example.admin.speech31;
+
+import android.content.Context;
+import android.speech.tts.TextToSpeech;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+    private TextToSpeech tts;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        TextView t = (TextView) findViewById(R.id.t);
+        tts = new TextToSpeech(this, this);
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        PhoneStateListener callStateListener = new PhoneStateListener() {
+            public void onCallStateChanged(int state, String incomingNumber) {
+                if (state == TelephonyManager.CALL_STATE_RINGING) {
+                    tts.speak(incomingNumber + "calling", TextToSpeech.QUEUE_FLUSH, null);
+                    Toast.makeText(MainActivity.this, "Phone is Ringing" + incomingNumber, Toast.LENGTH_SHORT).show();
+                }
+                if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                    Toast.makeText(MainActivity.this, "Phone is in call", Toast.LENGTH_SHORT).show();
+                }
+                if (state == TelephonyManager.CALL_STATE_IDLE) {
+                    Toast.makeText(MainActivity.this, "neither ringing nor picked", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        tm.listen(callStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            int result = tts.setLanguage(Locale.CANADA);
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+
+
+            } else {
+
+            }
+        }
+    }
+
+    public void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
+    }
+
