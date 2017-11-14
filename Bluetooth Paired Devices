@@ -1,0 +1,52 @@
+package com.example.admin.bluetoothpaired36;
+
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity {
+    TextView t;
+    private static final int REQUEST_ENABLE_BT=1;
+    BluetoothAdapter bluetoothAdapter;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        t = (TextView)findViewById(R.id.t);
+        bluetoothAdapter = (BluetoothAdapter.getDefaultAdapter());
+        t.append("\nAdapter:" +bluetoothAdapter);
+        CheckBluetoothState();
+
+
+    }
+    private void CheckBluetoothState(){
+        if(bluetoothAdapter==null){
+            t.append("/n Bluetooh not supported , Aborting");
+            return;
+
+        }else{ if(bluetoothAdapter.isEnabled()){
+            t.append("\n Bluetooth is enabled");
+            t.append("\n Paired devices are ");
+            Set<BluetoothDevice> devices = bluetoothAdapter.getBondedDevices();
+            for(BluetoothDevice device:devices){
+                t.append("\n Device" +device.getName() + "Device");
+
+            }
+
+        }else{
+
+            Toast.makeText(this, "Turn on your bluetooth", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent,REQUEST_ENABLE_BT);
+        }
+    }
+}
+}
