@@ -1,0 +1,88 @@
+package com.example.admin.externalstorage;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+
+public class MainActivity extends AppCompatActivity {
+    EditText e1,e2;
+    Button b1 ,b2;
+    TextView t1, t2;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        e1 =(EditText)findViewById(R.id.e1);
+        e2 = (EditText)findViewById(R.id.e2);
+        b1= (Button)findViewById(R.id.b1);
+        b2=(Button)findViewById(R.id.b2);
+        b1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String filename = e1.getText().toString();
+                String data = e2.getText().toString();
+                FileOutputStream fos;
+                try {
+                    File myFile = new File("/sdcard/" + filename);
+                    myFile.createNewFile();
+                     fos = new FileOutputStream(myFile);
+                    OutputStreamWriter myOutWriter = new OutputStreamWriter(fos);
+                    myOutWriter.append(data);
+                    myOutWriter.close();
+                    fos.close();
+                    Toast.makeText(MainActivity.this, filename + " is saved", Toast.LENGTH_SHORT).show();
+
+                }
+
+                    catch(FileNotFoundException e) {e.printStackTrace();}
+                catch(IOException e) {e.printStackTrace();}
+
+
+
+            }
+
+            }
+        );
+        b2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String filename = e1.getText().toString();
+                StringBuffer stringBuffer = new StringBuffer();
+
+                String aDataRow = "";
+                String aBuffer = "";
+
+                try{
+                    File myFile = new File("/sdcard/" + filename);
+                    FileInputStream fIn = new FileInputStream(myFile);
+                    BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+                    while ((aDataRow=myReader.readLine())!=null){
+                        aBuffer += aDataRow + "\n";
+
+                    }
+                    myReader.close();
+
+                }catch (IOException e){e.printStackTrace();}
+                Toast.makeText(MainActivity.this,aBuffer, Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+}
