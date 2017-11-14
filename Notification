@@ -1,0 +1,31 @@
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+    public void notify1(View view ){
+        NotificationManagerCompat my = NotificationManagerCompat.from(this);
+        NotificationCompat.Builder myb = new NotificationCompat.Builder(this);
+        myb.setContentTitle("1 New Message");
+        myb.setSmallIcon(R.mipmap.ic_launcher);
+        myb.setAutoCancel(true);
+        Intent i1= new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.androidauthority.com/"));
+        PendingIntent pd = PendingIntent.getActivity(this , 1, i1, PendingIntent.FLAG_UPDATE_CURRENT );
+        myb.setContentIntent(pd);
+        my.notify(1,myb.build());
+        finish();
+
+    }
+
+}
